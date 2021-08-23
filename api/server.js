@@ -3,6 +3,7 @@ const helmet = require('helmet')
 const cors = require('cors')
 const authRouter = require('../api/auth/auth-router')
 const eventsRouter = require('./events/event-router')
+const dishesRouter = require('./dishes/dishes-router')
 
 const server = express()
 
@@ -13,6 +14,7 @@ server.use(cors())
 
 server.use('/api/auth', authRouter)
 server.use('/api/events', eventsRouter)
+server.use('/api/dishes', dishesRouter)
 
 
 server.use((err, req, res, next) => { 

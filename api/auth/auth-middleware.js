@@ -58,6 +58,7 @@ const restrictedAccess = async(req, res, next) => {
           next({status: 401, message: `token invalid`})
         }else{
           req.decodedJWT = decoded
+          console.log(req)
           next()
         }
       })

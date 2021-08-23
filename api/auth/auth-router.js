@@ -7,17 +7,17 @@ const {checkUsernameExists, isRealUser, restrictedAccess} = require('./auth-midd
 
 
 function buildToken(user){
-    const payload = {
-      id: user.id,
-      username: user.username,
-      role: user.role
-    }
-  
-    const options = {
-      expiresIn: '1d'
-    }
-  
-    return jwt.sign(payload, JWT_SECRET, options)
+  const payload = {
+    id: user.user_id,
+    username: user.username,
+    role: user.role
+  }
+
+  const options = {
+    expiresIn: '1d'
+  }
+
+  return jwt.sign({role: user.role}, JWT_SECRET, options)
 }
 
 router.get('/users', restrictedAccess,  async (req, res) => {
@@ -26,22 +26,22 @@ router.get('/users', restrictedAccess,  async (req, res) => {
 
 
 router.post('/register', checkUsernameExists, async (req, res, next) => {
-    const user = req.body;
-    const hash = bcrypt.hashSync(user.password, 8)
-  
-    user.password = hash
-  
-    const newUser = await User.add(user)
-    res.status(201).json(newUser)
+  const user = req.body;
+  const hash = bcrypt.hashSync(user.password, 8)
+
+  user.password = hash
+
+  const newUser = await User.add(user)
+  res.status(201).json(newUser)
 });
 
 router.post('/login', isRealUser,  (req, res) => {
 
-    const token = buildToken(req.user)
-    res.status(200).json({
-      message: `welcome, ${req.user.username}!`,
-      token
-    })
-  });
+  const token = buildToken(req.user)
+  res.status(200).json({
+    message: `welcome, ${req.user.username}!`,
+    token
+  })
+});
 
 module.exports = router;
