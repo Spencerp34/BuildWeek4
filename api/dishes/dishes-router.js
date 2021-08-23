@@ -1,24 +1,37 @@
 const router = require("express").Router();
+const Dish = require('./dishes-model')
+const restrictedAccess = require('../restrictedAccess')
 
-router.get('/',  async (req, res) => {
-    res.json({message: 'get dishes is hooked up'})
+router.get('/',  restrictedAccess, async (req, res) => {
+    const allDishes = await Dish.find()
+    res.json(allDishes)
 })
 
-
-router.get('/:id',  async (req, res) => {
-    res.status(200).json({message: 'get dishes by ID is hooked up'})
+router.get('/:dish_id', restrictedAccess, async(req, res) => {
+    const {dish_id} = req.params
+    const theDish = await Dish.findByID(dish_id)
+    res.json(theDish)
 })
 
-router.post('/',  async (req, res) => {
-    res.status(200).json({message: 'Create new dish is hooked up'})
+router.post('/', async(req, res) => {
+    const dish = req.body
+    const newDish = await Dish.add(dish)
+    res.json(newDish)
 })
 
-router.put('/:id',  async (req, res) => {
-    res.status(200).json({message: 'edit dish is hooked up'})
+router.put('/:dish_id', async(req, res) => {
+    const {dish_id} = req.params
+    const changes = req.body
+    const newDish = await Dish.edit(dish_id, changes)
+    res.json(newDish)
+    // res.status(200).json({message: 'edit is working'})
 })
 
-router.delete('/:id',  async (req, res) => {
-    res.status(200).json({message: 'delete dish is hooked up'})
+router.delete('/:dish_id', async(req, res) => {
+    const {dish_id} = req.params
+    const deletedDish = await Dish.remove(dish_id)
+    res.json(deletedDish)
 })
 
-module.exports = router
+ 
+module.exports = router;

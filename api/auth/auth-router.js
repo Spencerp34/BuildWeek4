@@ -17,7 +17,7 @@ function buildToken(user){
     expiresIn: '1d'
   }
 
-  return jwt.sign({role: user.role}, JWT_SECRET, options)
+  return jwt.sign(payload, JWT_SECRET, options)
 }
 
 router.get('/users', restrictedAccess,  async (req, res) => {
