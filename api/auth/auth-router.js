@@ -1,9 +1,9 @@
 const router = require("express").Router();
+const {checkUsernameExists, isRealUser, restrictedAccess} = require('./auth-middleware')
+const { JWT_SECRET } = require("../secrets/index"); 
 const bcrypt = require('bcryptjs')
 const jwt = require('jsonwebtoken')
-const { JWT_SECRET } = require("../secrets"); 
 const User = require('./user-model')
-const {checkUsernameExists, isRealUser, restrictedAccess} = require('./auth-middleware')
 
 
 function buildToken(user){
