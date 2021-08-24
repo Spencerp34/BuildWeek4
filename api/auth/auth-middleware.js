@@ -31,7 +31,7 @@ const isRealUser = async (req, res, next) => {
         next({status: 401, message: 'username and password required'})
     }else{
         const {username, password} = req.body
-        const result = await db('users').where('username', username).select('username', 'password')
+        const result = await db('users').where('username', username).select('username', 'password', 'role')
         const exists = result[0]
         if(!exists){
             next({status: 401, message: 'invalid credentials'})
@@ -39,7 +39,10 @@ const isRealUser = async (req, res, next) => {
             const hash = exists.password
             const verified = bcrypt.compareSync(password, hash)
             if(exists && verified){
-                req.user = exists
+                req.user = {
+                    username: exists.username,
+                    role: exists.role
+                }
                 next()
             }else{
                 next({status: 401, message: 'invalid credentials'})
@@ -58,7 +61,6 @@ const restrictedAccess = async(req, res, next) => {
           next({status: 401, message: `token invalid`})
         }else{
           req.decodedJWT = decoded
-          console.log(req)
           next()
         }
       })

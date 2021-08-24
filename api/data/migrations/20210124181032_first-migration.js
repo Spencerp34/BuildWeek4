@@ -23,6 +23,12 @@ exports.up = async (knex) => {
         .inTable('events')
         .onDelete('CASCADE')
         .onUpdate('CASCADE')
+      table.integer('user_id')
+        .unsigned()
+        .references('user_id')
+        .inTable('users')
+        .onDelete('CASCADE')
+        .onUpdate('CASCADE')
     })
     .createTable('event_dishes', (table) => {
       table.increments('event_resource_id')

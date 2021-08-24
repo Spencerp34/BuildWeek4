@@ -1,16 +1,69 @@
 const db = require('../data/db-config')
 
 async function find(){
-    return await db('events').select('event_name', 'date', 'location')
+    const result = await db('events').select('event_id', 'event_name', 'date', 'location')
+    const dishResults = await db('dishes as d')
+        .leftJoin('users as u', 'd.user_id', 'u.user_id')
+        .select('d.dish_id', 'd.dish_name', 'd.event_id', 'u.username')
+    const events =  result.map(result => {
+        const formattedData = {
+            event_id: result.event_id,
+            event_name: result.event_name,
+            event_date: result.date,
+            event_location: result.location,
+            event_dishes: []
+        }
+        
+        dishResults.map(dish => {
+            if(dish.event_id === formattedData.event_id){
+                formattedData.event_dishes.push({
+                    dish_name: dish.dish_name,
+                    reserved: dish.username
+                })
+            }
+        })
+        
+        
+        return formattedData
+    })
+    
+    return events
 }
 
 async function findByID(id){
-    return await db('events').where('event_id', id).select('event_id', 'event_name', 'date', 'location')
+    const result = await db('events').where('event_id', id).select('event_id', 'event_name', 'date', 'location')
+    const dishResults = await db('dishes as d')
+        .leftJoin('users as u', 'd.user_id', 'u.user_id')
+        .select('d.dish_id', 'd.dish_name', 'd.event_id', 'u.username')
+    const events =  result.map(result => {
+        const formattedData = {
+            event_id: result.event_id,
+            event_name: result.event_name,
+            event_date: result.date,
+            event_location: result.location,
+            event_dishes: []
+        }
+        
+        dishResults.map(dish => {
+            if(dish.event_id === formattedData.event_id){
+                formattedData.event_dishes.push({
+                    dish_name: dish.dish_name,
+                    reserved: dish.username
+                })
+            }
+        })
+        return formattedData
+    })
+    return events[0]
 }
 
 async function add(user){
     const [newEventObj] = await db('events').insert(user, ['event_id', 'event_name', 'date', 'location'])
-    return newEventObj 
+    const formattedData = {
+        ...newEventObj,
+        event_dishes: []
+    }
+    return formattedData 
 }
 
 async function edit(event_id, changes){

@@ -40,7 +40,8 @@ router.post('/login', isRealUser,  (req, res) => {
   const token = buildToken(req.user)
   res.status(200).json({
     message: `welcome, ${req.user.username}!`,
-    token
+    token,
+    user: req.user
   })
 });
 

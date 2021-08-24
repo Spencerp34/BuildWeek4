@@ -13,6 +13,12 @@ router.get('/:dish_id', restrictedAccess, async(req, res) => {
     res.json(theDish)
 })
 
+router.get('/:event_id/dishes', async(req, res) =>{
+    const {event_id} = req.params
+    const requestedDishes= await Dish.findRequested(event_id)
+    res.json(requestedDishes)
+})
+
 router.post('/', async(req, res) => {
     const dish = req.body
     const newDish = await Dish.add(dish)
