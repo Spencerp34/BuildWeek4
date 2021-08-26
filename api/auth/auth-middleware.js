@@ -31,7 +31,7 @@ const isRealUser = async (req, res, next) => {
         next({status: 401, message: 'username and password required'})
     }else{
         const {username, password} = req.body
-        const result = await db('users').where('username', username).select('username', 'password', 'role')
+        const result = await db('users').where('username', username).select('username', 'password', 'role', 'user_id')
         const exists = result[0]
         if(!exists){
             next({status: 401, message: 'invalid credentials'})
@@ -41,7 +41,8 @@ const isRealUser = async (req, res, next) => {
             if(exists && verified){
                 req.user = {
                     username: exists.username,
-                    role: exists.role
+                    role: exists.role,
+                    user_id: exists.user_id
                 }
                 next()
             }else{
